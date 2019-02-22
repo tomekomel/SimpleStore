@@ -1,3 +1,6 @@
+const mongoose = require('mongoose');
+const Store = mongoose.model('Store');
+
 exports.homePage = (req, res) => {
   console.log(req.name);
   res.render('index');
@@ -8,5 +11,16 @@ exports.addStore = (req, res) => {
 };
 
 exports.createStore = (req, res) => {
-  res.json(req.body);
+  const store = new Store(req.body);
+  store
+    .save()
+    .then(store => {
+      return Store.find();
+    })
+    .then(stores => {
+      res.render('storeList', { stores: stores })
+    })
+    .catch(err => {
+      throw Error(err);
+    });
 };
